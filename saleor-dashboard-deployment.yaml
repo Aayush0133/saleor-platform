@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: saleor-dashboard
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: saleor-dashboard
@@ -14,9 +14,13 @@ spec:
     spec:
       containers:
         - name: saleor-dashboard
-          image: Aayush0133/saleor-dashboard:latest
+          image:aayush013/saleor-dashboard:latest
           ports:
-            - containerPort: 9000
-          envFrom:
-            - secretRef:
-                name: saleor-dashboard-env
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "1Gi"
+            requests:
+              cpu: "250m"
+              memory: "1Gi"

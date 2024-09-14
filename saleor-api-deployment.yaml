@@ -1,22 +1,119 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    autopilot.gke.io/resource-adjustment: '{"input":{"containers":[{"limits":{"cpu":"500m","ephemeral-storage":"1Gi","memory":"2Gi"},"requests":{"cpu":"500m","ephemeral-storage":"1Gi","memory":"1Gi"},"name":"saleor-api"}]},"output":{"containers":[{"limits":{"cpu":"500m","ephemeral-storage":"1Gi","memory":"1Gi"},"requests":{"cpu":"500m","ephemeral-storage":"1Gi","memory":"1Gi"},"name":"saleor-api"}]},"modified":true}'
+    autopilot.gke.io/warden-version: 2.9.53
+    deployment.kubernetes.io/revision: "4"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"saleor-api"},"name":"saleor-api","namespace":"default"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"saleor-api"}},"template":{"metadata":{"labels":{"app":"saleor-api"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"saleor-api-config"}},{"secretRef":{"name":"saleor-api-env"}}],"image":"aayush013/saleor-api:latest","livenessProbe":{"httpGet":{"path":"/healthz","port":8000},"initialDelaySeconds":30,"periodSeconds":10},"name":"saleor-api","ports":[{"containerPort":8000}],"readinessProbe":{"httpGet":{"path":"/readiness","port":8000},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"500m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}}],"securityContext":{"fsGroup":2000,"runAsGroup":3000,"runAsUser":1000}}}}}
+  creationTimestamp: "2024-09-14T13:15:03Z"
+  generation: 5
+  labels:
+    app: saleor-api
   name: saleor-api
+  namespace: default
+  resourceVersion: "8514955"
+  uid: bc47d86a-f9c0-41c0-a8a7-0e4e2a9f75ac
 spec:
+  progressDeadlineSeconds: 600
   replicas: 3
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: saleor-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2024-09-14T17:21:19Z"
+      creationTimestamp: null
       labels:
         app: saleor-api
     spec:
       containers:
-        - name: saleor-api
-          image: Aayush0133/saleor-api:latest
-          ports:
-            - containerPort: 8000
-          envFrom:
-            - secretRef:
-                name: saleor-api-env
+      - envFrom:
+        - configMapRef:
+            name: saleor-api-config
+        - secretRef:
+            name: saleor-api-env
+        image: aayush013/saleor-api:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: saleor-api
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readiness
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 500m
+            ephemeral-storage: 1Gi
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            ephemeral-storage: 1Gi
+            memory: 1Gi
+        securityContext:
+          capabilities:
+            drop:
+            - NET_RAW
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 2000
+        runAsGroup: 3000
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: kubernetes.io/arch
+        operator: Equal
+        value: amd64
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: "2024-09-14T14:45:06Z"
+    lastUpdateTime: "2024-09-14T14:45:06Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  - lastTransitionTime: "2024-09-14T17:02:01Z"
+    lastUpdateTime: "2024-09-14T17:21:20Z"
+    message: ReplicaSet "saleor-api-5b8896d4c7" is progressing.
+    reason: ReplicaSetUpdated
+    status: "True"
+    type: Progressing
+  observedGeneration: 5
+  readyReplicas: 2
+  replicas: 4
+  unavailableReplicas: 2
+  updatedReplicas: 1

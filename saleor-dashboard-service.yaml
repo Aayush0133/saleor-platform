@@ -7,5 +7,6 @@ spec:
     app: saleor-dashboard
   ports:
     - protocol: TCP
-      port: 9002
-      targetPort: 9000
+      port: 80
+      targetPort: 9002
+  type: LoadBalancer

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: saleor-api-config
+  namespace: default
+data:
+  ALLOWED_CLIENT_HOSTS: "localhost,127.0.0.1,35.226.6.22,10.20.128.45"
+  DEBUG: "False"
