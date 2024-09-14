@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saleor-dashboard
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: saleor-dashboard
+  template:
+    metadata:
+      labels:
+        app: saleor-dashboard
+    spec:
+      containers:
+        - name: saleor-dashboard
+          image: Aayush0133/saleor-dashboard:latest
+          ports:
+            - containerPort: 9000
+          envFrom:
+            - secretRef:
+                name: saleor-dashboard-env
